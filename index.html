@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/DatosRadiodeEstudioSpazio_1.js"></script>
+        <script src="data/DatosEducacionSuperior25aosymasSpazio_2.js"></script>
+        <script src="data/PuntoSpazio_3.js"></script>
+        <script src="data/AreadeEstudioSpazio_4.js"></script>
+        <script src="data/Distancia_estacionesmetro_a_Spazio_5.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[19.403877622735216,-99.18550557229875],[19.447023392823674,-99.12720505217769]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_WazeWorld_0');
+        map.getPane('pane_WazeWorld_0').style.zIndex = 400;
+        var layer_WazeWorld_0 = L.tileLayer('https://worldtiles3.waze.com/tiles/{z}/{x}/{y}.png', {
+            pane: 'pane_WazeWorld_0',
+            opacity: 0.5,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_WazeWorld_0;
+        map.addLayer(layer_WazeWorld_0);
+        function pop_DatosRadiodeEstudioSpazio_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">POB1</th>\
+                        <td class="visible-with-data" id="POB1">' + (feature.properties['POB1'] !== null ? autolinker.link(feature.properties['POB1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DatosRadiodeEstudioSpazio_1_0(feature) {
+            if (feature.properties['POB1'] >= 0.000000 && feature.properties['POB1'] <= 58.000000 ) {
+                return {
+                pane: 'pane_DatosRadiodeEstudioSpazio_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,245,240,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['POB1'] >= 58.000000 && feature.properties['POB1'] <= 147.000000 ) {
+                return {
+                pane: 'pane_DatosRadiodeEstudioSpazio_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,190,165,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['POB1'] >= 147.000000 && feature.properties['POB1'] <= 280.000000 ) {
+                return {
+                pane: 'pane_DatosRadiodeEstudioSpazio_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,112,80,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['POB1'] >= 280.000000 && feature.properties['POB1'] <= 588.000000 ) {
+                return {
+                pane: 'pane_DatosRadiodeEstudioSpazio_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(211,32,32,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['POB1'] >= 588.000000 && feature.properties['POB1'] <= 1397.000000 ) {
+                return {
+                pane: 'pane_DatosRadiodeEstudioSpazio_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(103,0,13,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_DatosRadiodeEstudioSpazio_1');
+        map.getPane('pane_DatosRadiodeEstudioSpazio_1').style.zIndex = 401;
+        map.getPane('pane_DatosRadiodeEstudioSpazio_1').style['mix-blend-mode'] = 'normal';
+        var layer_DatosRadiodeEstudioSpazio_1 = new L.geoJson(json_DatosRadiodeEstudioSpazio_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DatosRadiodeEstudioSpazio_1',
+            layerName: 'layer_DatosRadiodeEstudioSpazio_1',
+            pane: 'pane_DatosRadiodeEstudioSpazio_1',
+            onEachFeature: pop_DatosRadiodeEstudioSpazio_1,
+            style: style_DatosRadiodeEstudioSpazio_1_0,
+        });
+        bounds_group.addLayer(layer_DatosRadiodeEstudioSpazio_1);
+        map.addLayer(layer_DatosRadiodeEstudioSpazio_1);
+        function pop_DatosEducacionSuperior25aosymasSpazio_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['_EDU46'] !== null ? autolinker.link(feature.properties['_EDU46'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DatosEducacionSuperior25aosymasSpazio_2_0(feature) {
+            if (feature.properties['_EDU46'] >= 0.000000 && feature.properties['_EDU46'] <= 1.000000 ) {
+                return {
+                pane: 'pane_DatosEducacionSuperior25aosymasSpazio_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['_EDU46'] >= 1.000000 && feature.properties['_EDU46'] <= 88.000000 ) {
+                return {
+                pane: 'pane_DatosEducacionSuperior25aosymasSpazio_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,220,240,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['_EDU46'] >= 88.000000 && feature.properties['_EDU46'] <= 161.000000 ) {
+                return {
+                pane: 'pane_DatosEducacionSuperior25aosymasSpazio_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(115,178,216,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['_EDU46'] >= 161.000000 && feature.properties['_EDU46'] <= 279.000000 ) {
+                return {
+                pane: 'pane_DatosEducacionSuperior25aosymasSpazio_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(41,121,185,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['_EDU46'] >= 279.000000 && feature.properties['_EDU46'] <= 514.000000 ) {
+                return {
+                pane: 'pane_DatosEducacionSuperior25aosymasSpazio_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_DatosEducacionSuperior25aosymasSpazio_2');
+        map.getPane('pane_DatosEducacionSuperior25aosymasSpazio_2').style.zIndex = 402;
+        map.getPane('pane_DatosEducacionSuperior25aosymasSpazio_2').style['mix-blend-mode'] = 'normal';
+        var layer_DatosEducacionSuperior25aosymasSpazio_2 = new L.geoJson(json_DatosEducacionSuperior25aosymasSpazio_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DatosEducacionSuperior25aosymasSpazio_2',
+            layerName: 'layer_DatosEducacionSuperior25aosymasSpazio_2',
+            pane: 'pane_DatosEducacionSuperior25aosymasSpazio_2',
+            onEachFeature: pop_DatosEducacionSuperior25aosymasSpazio_2,
+            style: style_DatosEducacionSuperior25aosymasSpazio_2_0,
+        });
+        bounds_group.addLayer(layer_DatosEducacionSuperior25aosymasSpazio_2);
+        map.addLayer(layer_DatosEducacionSuperior25aosymasSpazio_2);
+        function pop_PuntoSpazio_3(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PuntoSpazio_3_0() {
+            return {
+                pane: 'pane_PuntoSpazio_3',
+                shape: 'diamond',
+                radius: 10.000000000000002,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,30,42,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_PuntoSpazio_3');
+        map.getPane('pane_PuntoSpazio_3').style.zIndex = 403;
+        map.getPane('pane_PuntoSpazio_3').style['mix-blend-mode'] = 'normal';
+        var layer_PuntoSpazio_3 = new L.geoJson(json_PuntoSpazio_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_PuntoSpazio_3',
+            layerName: 'layer_PuntoSpazio_3',
+            pane: 'pane_PuntoSpazio_3',
+            onEachFeature: pop_PuntoSpazio_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_PuntoSpazio_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_PuntoSpazio_3);
+        map.addLayer(layer_PuntoSpazio_3);
+        function pop_AreadeEstudioSpazio_4(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_AreadeEstudioSpazio_4_0() {
+            return {
+                pane: 'pane_AreadeEstudioSpazio_4',
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '20.0,4.0,8.0,4.0',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,182,54,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_AreadeEstudioSpazio_4');
+        map.getPane('pane_AreadeEstudioSpazio_4').style.zIndex = 404;
+        map.getPane('pane_AreadeEstudioSpazio_4').style['mix-blend-mode'] = 'normal';
+        var layer_AreadeEstudioSpazio_4 = new L.geoJson(json_AreadeEstudioSpazio_4, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_AreadeEstudioSpazio_4',
+            layerName: 'layer_AreadeEstudioSpazio_4',
+            pane: 'pane_AreadeEstudioSpazio_4',
+            onEachFeature: pop_AreadeEstudioSpazio_4,
+            style: style_AreadeEstudioSpazio_4_0,
+        });
+        bounds_group.addLayer(layer_AreadeEstudioSpazio_4);
+        map.addLayer(layer_AreadeEstudioSpazio_4);
+        function pop_Distancia_estacionesmetro_a_Spazio_5(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Distancia_estacionesmetro_a_Spazio_5_0() {
+            return {
+                pane: 'pane_Distancia_estacionesmetro_a_Spazio_5',
+                shape: 'diamond',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Distancia_estacionesmetro_a_Spazio_5');
+        map.getPane('pane_Distancia_estacionesmetro_a_Spazio_5').style.zIndex = 405;
+        map.getPane('pane_Distancia_estacionesmetro_a_Spazio_5').style['mix-blend-mode'] = 'normal';
+        var layer_Distancia_estacionesmetro_a_Spazio_5 = new L.geoJson(json_Distancia_estacionesmetro_a_Spazio_5, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Distancia_estacionesmetro_a_Spazio_5',
+            layerName: 'layer_Distancia_estacionesmetro_a_Spazio_5',
+            pane: 'pane_Distancia_estacionesmetro_a_Spazio_5',
+            onEachFeature: pop_Distancia_estacionesmetro_a_Spazio_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Distancia_estacionesmetro_a_Spazio_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Distancia_estacionesmetro_a_Spazio_5);
+        map.addLayer(layer_Distancia_estacionesmetro_a_Spazio_5);
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: '<img src="legend/Distancia_estacionesmetro_a_Spazio_5.png" /> Distancia_estacionesmetro_a_Spazio', layer: layer_Distancia_estacionesmetro_a_Spazio_5},
+            {label: '<img src="legend/AreadeEstudioSpazio_4.png" /> Area de Estudio Spazio', layer: layer_AreadeEstudioSpazio_4},
+            {label: '<img src="legend/PuntoSpazio_3.png" /> Punto Spazio', layer: layer_PuntoSpazio_3},
+            {label: 'Datos Educacion Superior 25 años y mas Spazio<br /><table><tr><td style="text-align: center;"><img src="legend/DatosEducacionSuperior25aosymasSpazio_2_010.png" /></td><td>0 - 1</td></tr><tr><td style="text-align: center;"><img src="legend/DatosEducacionSuperior25aosymasSpazio_2_1881.png" /></td><td>1 - 88</td></tr><tr><td style="text-align: center;"><img src="legend/DatosEducacionSuperior25aosymasSpazio_2_881612.png" /></td><td>88 - 161</td></tr><tr><td style="text-align: center;"><img src="legend/DatosEducacionSuperior25aosymasSpazio_2_1612793.png" /></td><td>161 - 279</td></tr><tr><td style="text-align: center;"><img src="legend/DatosEducacionSuperior25aosymasSpazio_2_2795144.png" /></td><td>279 - 514</td></tr></table>', layer: layer_DatosEducacionSuperior25aosymasSpazio_2},
+            {label: 'Datos Radio de Estudio Spazio<br /><table><tr><td style="text-align: center;"><img src="legend/DatosRadiodeEstudioSpazio_1_0580.png" /></td><td>0 - 58</td></tr><tr><td style="text-align: center;"><img src="legend/DatosRadiodeEstudioSpazio_1_581471.png" /></td><td>58 - 147</td></tr><tr><td style="text-align: center;"><img src="legend/DatosRadiodeEstudioSpazio_1_1472802.png" /></td><td>147 - 280</td></tr><tr><td style="text-align: center;"><img src="legend/DatosRadiodeEstudioSpazio_1_2805883.png" /></td><td>280 - 588</td></tr><tr><td style="text-align: center;"><img src="legend/DatosRadiodeEstudioSpazio_1_58813974.png" /></td><td>588 - 1397</td></tr></table>', layer: layer_DatosRadiodeEstudioSpazio_1},
+            {label: "Waze (World)", layer: layer_WazeWorld_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        </script>
+    </body>
+</html>
